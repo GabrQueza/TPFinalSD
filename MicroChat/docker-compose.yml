@@ -1,0 +1,86 @@
+version: "3.8"
+
+services:
+  # ------------------------------------
+  # 1. Message Broker (Redis)
+  # Usado pelo Chat Service para sincronizar mensagens entre instâncias (Escalabilidade Horizontal)
+  # ------------------------------------
+  redis:
+    image: redis:6-alpine
+    container_name: microchat_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+
+  # ------------------------------------
+  # 2. Database (MongoDB)
+  # Usado pelos serviços Auth e Chat para persistência de dados
+  # ------------------------------------
+  mongodb:
+    image: mongo:latest
+    container_name: microchat_mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: microchat_db
+    volumes:
+      - mongo_data:/data/db
+
+  # ------------------------------------
+  # 3. Auth Service (Microsserviço de Usuários)
+  # ------------------------------------
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: microchat_auth
+    ports:
+      - "3001:3001"
+    environment:
+      PORT: 3001
+      MONGO_URI: mongodb://mongodb:27017/microchat_db
+      JWT_SECRET: "sua_chave_secreta_jwt"
+    depends_on:
+      - mongodb
+    restart: always
+
+  # ------------------------------------
+  # 4. Chat Service (Microsserviço de Mensagens em Tempo Real)
+  # Duas instâncias para demonstrar a Escalabilidade Horizontal
+  # ------------------------------------
+  chat-service-1:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+    container_name: microchat_chat_1
+    ports:
+      - "3002:3002"
+    environment:
+      PORT: 3002
+      MONGO_URI: mongodb://mongodb:27017/microchat_db
+      REDIS_HOST: redis
+      JWT_SECRET: "sua_chave_secreta_jwt"
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
+
+  chat-service-2:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+    container_name: microchat_chat_2
+    ports:
+      - "3003:3002" # Mapeia a porta interna 3002 para 3003 externa
+    environment:
+      PORT: 3002
+      MONGO_URI: mongodb://mongodb:27017/microchat_db
+      REDIS_HOST: redis
+      JWT_SECRET: "sua_chave_secreta_jwt"
+    depends_on:
+      - mongodb
+      - redis
+    restart: always
+
+volumes:
+  mongo_data:

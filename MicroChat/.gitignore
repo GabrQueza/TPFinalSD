@@ -1,0 +1,56 @@
+-----------------------------------------------------------------
+
+Arquivos gerados pelo Node.js
+
+-----------------------------------------------------------------
+
+Dependências do módulo: O MAIS IMPORTANTE!
+
+node_modules
+
+Logs
+
+npm-debug.log
+.npm
+
+-----------------------------------------------------------------
+
+Arquivos gerados pelo Docker
+
+-----------------------------------------------------------------
+
+Ignora pastas de volumes do MongoDB
+
+mongo_data/
+
+Ignora caches de build do Docker Compose
+
+.docker/
+
+-----------------------------------------------------------------
+
+Arquivos de Sistema/Ambiente
+
+-----------------------------------------------------------------
+
+Arquivos do macOS
+
+.DS_Store
+
+Arquivos do Visual Studio Code
+
+.vscode/
+
+-----------------------------------------------------------------
+
+Arquivos de Execução
+
+-----------------------------------------------------------------
+
+Arquivos de log, se gerados
+
+*.log
+
+Arquivos de dados de teste (se você gerar logs ou dados localmente fora do container)
+
+temp/

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MicroChat SD</title>
+    <!-- Tailwind CSS CDN para estética responsiva -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .msg-bubble {
+        max-width: 80%;
+      }
+      .self-end {
+        background-color: #dcf8c6;
+      }
+      .peer-start {
+        background-color: #ffffff;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <!-- Container Principal do Chat -->
+    <div
+      id="chat-container"
+      class="w-full max-w-4xl h-[90vh] bg-white shadow-xl rounded-xl flex flex-col md:flex-row overflow-hidden"
+    >
+      <!-- Painel de Login/Status -->
+      <div
+        id="status-panel"
+        class="w-full md:w-1/4 bg-gray-50 p-4 flex flex-col justify-between border-r border-gray-200"
+      >
+        <div>
+          <h1 class="text-xl font-bold text-gray-800">MicroChat SD</h1>
+          <p
+            id="connection-status"
+            class="mt-2 text-sm font-medium text-red-500"
+          >
+            Desconectado
+          </p>
+
+          <div id="user-info" class="mt-4 hidden">
+            <p class="text-sm">Logado como:</p>
+            <p
+              class="font-semibold text-lg text-blue-600"
+              id="current-username"
+            ></p>
+            <p class="text-xs text-gray-500" id="current-userid"></p>
+          </div>
+
+          <!-- Lista Simplificada de Usuários (Contatos Fixos) -->
+          <div class="mt-6">
+            <h2 class="text-md font-semibold mb-2">Usuários Online:</h2>
+            <ul id="contact-list" class="space-y-2">
+              <!-- Lista preenchida pelo JS, apenas para simulação 1:1 -->
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formulário de Login -->
+        <form id="login-form" class="space-y-3">
+          <input
+            id="login-username"
+            type="text"
+            placeholder="Usuário"
+            required
+            class="w-full p-2 border rounded-lg text-sm focus:ring-blue-500"
+          />
+          <input
+            id="login-password"
+            type="password"
+            placeholder="Senha"
+            required
+            class="w-full p-2 border rounded-lg text-sm focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            class="w-full bg-blue-600 text-white p-2 rounded-lg text-sm hover:bg-blue-700"
+          >
+            Login / Registrar
+          </button>
+        </form>
+      </div>
+
+      <!-- Painel de Conversa -->
+      <div id="chat-panel" class="w-full md:w-3/4 flex flex-col hidden">
+        <!-- Cabeçalho da Conversa -->
+        <div id="chat-header" class="p-4 border-b bg-gray-100">
+          <h2 class="text-lg font-semibold text-gray-800">
+            Conversa com: <span id="target-username">Selecione um Usuário</span>
+          </h2>
+          <p class="text-xs text-gray-500" id="target-userid"></p>
+        </div>
+
+        <!-- Área de Mensagens -->
+        <div
+          id="messages-display"
+          class="flex-grow p-4 overflow-y-auto space-y-3 bg-gray-50"
+        >
+          <!-- Mensagens serão injetadas aqui -->
+        </div>
+
+        <!-- Formulário de Envio -->
+        <div class="p-4 border-t bg-white">
+          <form id="message-form" class="flex space-x-2">
+            <input
+              id="message-input"
+              type="text"
+              placeholder="Digite sua mensagem..."
+              required
+              disabled
+              class="flex-grow p-3 border rounded-xl focus:ring-blue-500"
+            />
+            <button
+              type="submit"
+              id="send-btn"
+              disabled
+              class="bg-green-600 text-white p-3 rounded-xl hover:bg-green-700 disabled:opacity-50"
+            >
+              Enviar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Script Cliente -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
