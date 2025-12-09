@@ -63,32 +63,3 @@ Mude const CHAT_SERVICE_URL = 'http://localhost:3002';
 Para const CHAT_SERVICE_URL = 'http://localhost:3003';
 
 Salve, recarregue o index.html e tente enviar uma mensagem entre os usuários. A entrega imediata prova que o Redis distribuiu a mensagem entre as portas 3002 e 3003.
-
-```eof
-
-2. Perguntas sobre Ambiente e Comandos
-
-A. Extensão "Container Tools" da Microsoft
-
-Sim, você deve usar a extensão "Container Tools" (agora geralmente chamada apenas de "Docker" no VS Code).
-
-Essa extensão é extremamente útil para:
-
-Visualizar todos os seus contêineres (redis, mongodb, auth-service, chat-service-1, etc.).
-
-Verificar os logs em tempo real de qualquer serviço (clicando com o botão direito no contêiner).
-
-Parar ou reconstruir o ambiente com facilidade, substituindo a necessidade de digitar comandos longos no terminal.
-
-B. Comando para Instalar Node.js
-
-Você está no caminho certo! O comando para instalar as dependências do Node.js é npm install (ou a forma abreviada npm i).
-
-npm (Node Package Manager) é a ferramenta padrão do Node.js.
-
-yarn é um gerenciador de pacotes alternativo. Ambos fazem a mesma coisa, mas o seu projeto está configurado para usar npm.
-
-O mais importante: Como estamos usando o Docker, você não precisa rodar npm install localmente no seu computador. O Dockerfile de cada serviço já contém a linha RUN npm install , o que significa que o Docker faz a instalação das dependências dentro do contêiner durante a fase de construção (docker-compose up --build).
-
-Isso simplifica seu trabalho e garante que o ambiente de produção (o contêiner) seja idêntico ao ambiente de desenvolvimento.
-```
