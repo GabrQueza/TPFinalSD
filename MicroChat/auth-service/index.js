@@ -114,6 +114,18 @@ app.post("/verify-token", (req, res) => {
   }
 });
 
+// Endpoint para listar todos os usuários (retorna id e username)
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({}, "username");
+    const output = users.map((u) => ({ id: u._id, username: u.username }));
+    res.send(output);
+  } catch (err) {
+    console.error("Erro ao listar usuários:", err);
+    res.status(500).send({ message: "Erro interno ao listar usuários." });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Auth Service rodando na porta ${PORT}`);
 });

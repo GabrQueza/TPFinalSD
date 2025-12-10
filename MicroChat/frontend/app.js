@@ -4,19 +4,16 @@
 
 // Endereços dos serviços (Acessíveis via proxy reverso ou porta direta no Docker)
 const AUTH_SERVICE_URL = "http://localhost:3001";
-// Usamos a porta 3002, que corresponde à primeira instância do Chat Service no docker-compose
-const CHAT_SERVICE_URL = "http://localhost:3002";
+// Usamos a porta 3002, que corresponde à primeira instância do Chat Service no docker-compose, é preciso mudar entre 3002 na primeira instancia
+// E usar a 3003 na segunda instancia para testar a escalabilidade.
+const CHAT_SERVICE_URL = "http://localhost:3003";
 
 let socket;
 let currentUser = { id: null, username: null, token: null };
 let targetUser = { id: null, username: null };
 
-// Estrutura de Usuários para Simulação 1:1 (IDs e Nomes)
-const SIMULATED_USERS = [
-  { id: "user_a", username: "Alice" },
-  { id: "user_b", username: "Bob" },
-  { id: "user_c", username: "Carlos" },
-];
+// Lista real de usuários carregada do Auth Service
+let USERS = [];
 
 // --- Elementos DOM ---
 const statusPanel = document.getElementById("status-panel");
@@ -75,7 +72,7 @@ function displayMessage(msg) {
 
 function loadContactList() {
   contactList.innerHTML = "";
-  SIMULATED_USERS.forEach((user) => {
+  USERS.forEach((user) => {
     if (user.id !== currentUser.id) {
       const li = document.createElement("li");
       li.className =
@@ -85,6 +82,18 @@ function loadContactList() {
       contactList.appendChild(li);
     }
   });
+}
+
+async function fetchUsers() {
+  try {
+    const res = await fetch(`${AUTH_SERVICE_URL}/users`);
+    if (!res.ok) throw new Error("Falha ao obter usuários");
+    const data = await res.json();
+    USERS = data;
+  } catch (error) {
+    console.error("Erro ao buscar usuários:", error);
+    USERS = [];
+  }
 }
 
 // --- Lógica de Conversa ---
@@ -109,10 +118,9 @@ async function loadMessageHistory(userId1, userId2) {
 
     messagesDisplay.innerHTML = ""; // Limpa antes de carregar
     history.forEach((msg) => {
-      // Adiciona o nome do usuário para exibição
-      if (msg.senderId === "user_a") msg.senderUsername = "Alice";
-      if (msg.senderId === "user_b") msg.senderUsername = "Bob";
-      if (msg.senderId === "user_c") msg.senderUsername = "Carlos";
+      // Adiciona o nome do usuário para exibição a partir da lista real
+      const userObj = USERS.find((u) => u.id === msg.senderId);
+      msg.senderUsername = userObj ? userObj.username : msg.senderId;
       displayMessage(msg);
     });
   } catch (error) {
@@ -170,6 +178,8 @@ async function handleLogin(e) {
       currentUsernameEl.textContent = data.username;
       currentUserIdEl.textContent = data.userId;
 
+      // Busca a lista real de usuários antes de popular a lista de contatos
+      await fetchUsers();
       loadContactList();
       connectWebSocket(); // Conecta ao Chat Service
     } else {
@@ -219,10 +229,8 @@ function connectWebSocket() {
       (msg.senderId === targetUser.id && msg.receiverId === currentUser.id);
 
     if (isActiveConversation) {
-      // Adiciona o nome do usuário para exibição
-      if (msg.senderId === "user_a") msg.senderUsername = "Alice";
-      if (msg.senderId === "user_b") msg.senderUsername = "Bob";
-      if (msg.senderId === "user_c") msg.senderUsername = "Carlos";
+      const userObj = USERS.find((u) => u.id === msg.senderId);
+      msg.senderUsername = userObj ? userObj.username : msg.senderId;
       displayMessage(msg);
     } else {
       console.log(
