@@ -64,31 +64,38 @@ Para const CHAT_SERVICE_URL = 'http://localhost:3003';
 
 Salve, recarregue o index.html e tente enviar uma mensagem entre os usuários. A entrega imediata prova que o Redis distribuiu a mensagem entre as portas 3002 e 3003.
 
-```eof
+6. Rodar pelo Python o locahost:
 
-2. Perguntas sobre Ambiente e Comandos
+Passo a Passo para Corrigir a Origem
+Parar o Docker (Opcional, mas limpa o console): Se você quiser parar os logs, execute docker compose down. Se não, continue com o próximo passo.
 
-A. Extensão "Container Tools" da Microsoft
+Abrir o Terminal na Pasta Correta: No VS Code, abra um novo terminal e navegue para a pasta frontend/ do seu projeto:
 
-Sim, você deve usar a extensão "Container Tools" (agora geralmente chamada apenas de "Docker" no VS Code).
+```bash
 
-Essa extensão é extremamente útil para:
+cd frontend
+Iniciar o Servidor Python: Use o módulo http.server do Python para servir o Front-end na porta 8000:
 
-Visualizar todos os seus contêineres (redis, mongodb, auth-service, chat-service-1, etc.).
+```
 
-Verificar os logs em tempo real de qualquer serviço (clicando com o botão direito no contêiner).
+Se você tem Python 3
+python -m http.server 8000
+O terminal deve mostrar: Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
-Parar ou reconstruir o ambiente com facilidade, substituindo a necessidade de digitar comandos longos no terminal.
+Acessar a URL Localhost: Abra o navegador e acesse:
 
-B. Comando para Instalar Node.js
+http://localhost:8000/
+Testar: Com o Front-end carregado via http://localhost:8000, tente registrar e logar novamente (usuário alice, senha 1234).
 
-Você está no caminho certo! O comando para instalar as dependências do Node.js é npm install (ou a forma abreviada npm i).
+7. Para restartar o docker:
+```bash
+docker compose down -v
+```
 
-npm (Node Package Manager) é a ferramenta padrão do Node.js.
+```bash
+docker compose build --no-cache
+```
 
-yarn é um gerenciador de pacotes alternativo. Ambos fazem a mesma coisa, mas o seu projeto está configurado para usar npm.
-
-O mais importante: Como estamos usando o Docker, você não precisa rodar npm install localmente no seu computador. O Dockerfile de cada serviço já contém a linha RUN npm install , o que significa que o Docker faz a instalação das dependências dentro do contêiner durante a fase de construção (docker-compose up --build).
-
-Isso simplifica seu trabalho e garante que o ambiente de produção (o contêiner) seja idêntico ao ambiente de desenvolvimento.
+```bash
+docker compose up
 ```
