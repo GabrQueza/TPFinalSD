@@ -5,12 +5,21 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const cors = require("cors"); // Novo: Importa o CORS
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGO_URI =
   process.env.MONGO_URI || "mongodb://localhost:27017/microchat_db";
 const JWT_SECRET = process.env.JWT_SECRET || "chave_secreta_padrao";
+
+// --- Configuração CORS ---
+// Permite que o Front-end rodando em http://localhost:8000 acesse a API.
+const corsOptions = {
+  origin: "http://localhost:8000",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -45,18 +54,18 @@ app.post("/register", async (req, res) => {
     if (!username || !password) {
       return res
         .status(400)
-        .send({ message: "Nome de usuário e senha são obrigatórios." });
+        .send({ message: "Nome de utilizador e senha são obrigatórios." });
     }
     const user = new User({ username, password });
     await user.save();
-    res.status(201).send({ message: "Usuário registrado com sucesso." });
+    res.status(201).send({ message: "Usuário registado com sucesso." });
   } catch (error) {
     if (error.code === 11000) {
       // Duplicated key error
-      return res.status(409).send({ message: "Nome de usuário já existe." });
+      return res.status(409).send({ message: "Nome de utilizador já existe." });
     }
-    console.error("Erro no registro:", error);
-    res.status(500).send({ message: "Erro interno ao registrar." });
+    console.error("Erro no registo:", error);
+    res.status(500).send({ message: "Erro interno ao registar." });
   }
 });
 

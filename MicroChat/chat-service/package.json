@@ -12,6 +12,7 @@
     "@socket.io/redis-adapter": "^8.2.1",
     "redis": "^4.6.12",
     "mongoose": "^8.0.3",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5"
   }
 }

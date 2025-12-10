@@ -8,6 +8,7 @@ const { createClient } = require("redis");
 const { createAdapter } = require("@socket.io/redis-adapter");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const cors = require("cors"); // Novo: Importa o CORS
 
 const app = express();
 const httpServer = createServer(app);
@@ -16,6 +17,14 @@ const MONGO_URI =
   process.env.MONGO_URI || "mongodb://localhost:27017/microchat_db";
 const REDIS_HOST = process.env.REDIS_HOST || "localhost";
 const JWT_SECRET = process.env.JWT_SECRET || "chave_secreta_padrao";
+
+// --- Configuração CORS ---
+// Permite que o Front-end rodando em http://localhost:8000 acesse a API.
+const corsOptions = {
+  origin: "http://localhost:8000",
+  optionsSuccessStatus: 200,
+};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
@@ -39,7 +48,6 @@ const Message = mongoose.model("Message", MessageSchema);
 
 // ---------------------
 // 2. Configuração do Redis (Message Broker) para Escalabilidade
-// O adaptador Redis permite que múltiplas instâncias do Chat Service se comuniquem.
 // ---------------------
 const pubClient = createClient({ url: `redis://${REDIS_HOST}:6379` });
 const subClient = pubClient.duplicate();
@@ -56,7 +64,8 @@ Promise.all([pubClient.connect(), subClient.connect()])
 // 3. Configuração do Socket.IO (WebSockets)
 // ---------------------
 const io = new Server(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
+  // CORS para a conexão WebSocket (deve ser o mesmo que a API HTTP)
+  cors: corsOptions,
 });
 
 // Aplica o adaptador Redis para distribuir mensagens entre instâncias

@@ -2,8 +2,7 @@ version: "3.8"
 
 services:
   # ------------------------------------
-  # 1. Message Broker (Redis)
-  # Usado pelo Chat Service para sincronizar mensagens entre instâncias (Escalabilidade Horizontal)
+  # Serviços de Infraestrutura (Redis e MongoDB)
   # ------------------------------------
   redis:
     image: redis:6-alpine
@@ -12,10 +11,6 @@ services:
       - "6379:6379"
     command: redis-server --appendonly yes
 
-  # ------------------------------------
-  # 2. Database (MongoDB)
-  # Usado pelos serviços Auth e Chat para persistência de dados
-  # ------------------------------------
   mongodb:
     image: mongo:latest
     container_name: microchat_mongodb
@@ -27,7 +22,8 @@ services:
       - mongo_data:/data/db
 
   # ------------------------------------
-  # 3. Auth Service (Microsserviço de Usuários)
+  # Auth Service (Microsserviço de Usuários)
+  # VOLUME ANÔNIMO adicionado para isolar node_modules e resolver o erro bcrypt.
   # ------------------------------------
   auth-service:
     build:
@@ -40,13 +36,16 @@ services:
       PORT: 3001
       MONGO_URI: mongodb://mongodb:27017/microchat_db
       JWT_SECRET: "sua_chave_secreta_jwt"
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules # <-- VOLUME ANÔNIMO: ISOLA DEPENDÊNCIAS NATIVAS
     depends_on:
       - mongodb
     restart: always
 
   # ------------------------------------
-  # 4. Chat Service (Microsserviço de Mensagens em Tempo Real)
-  # Duas instâncias para demonstrar a Escalabilidade Horizontal
+  # Chat Service (Microsserviço de Mensagens em Tempo Real)
+  # VOLUME ANÔNIMO adicionado para isolar node_modules e resolver o erro bcrypt/nativa.
   # ------------------------------------
   chat-service-1:
     build:
@@ -60,6 +59,9 @@ services:
       MONGO_URI: mongodb://mongodb:27017/microchat_db
       REDIS_HOST: redis
       JWT_SECRET: "sua_chave_secreta_jwt"
+    volumes:
+      - ./chat-service:/app
+      - /app/node_modules # <-- VOLUME ANÔNIMO: ISOLA DEPENDÊNCIAS NATIVAS
     depends_on:
       - mongodb
       - redis
@@ -71,12 +73,15 @@ services:
       dockerfile: Dockerfile
     container_name: microchat_chat_2
     ports:
-      - "3003:3002" # Mapeia a porta interna 3002 para 3003 externa
+      - "3003:3002"
     environment:
       PORT: 3002
       MONGO_URI: mongodb://mongodb:27017/microchat_db
       REDIS_HOST: redis
       JWT_SECRET: "sua_chave_secreta_jwt"
+    volumes:
+      - ./chat-service:/app
+      - /app/node_modules # <-- VOLUME ANÔNIMO: ISOLA DEPENDÊNCIAS NATIVAS
     depends_on:
       - mongodb
       - redis
