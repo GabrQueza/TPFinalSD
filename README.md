@@ -71,14 +71,14 @@ Parar o Docker (Opcional, mas limpa o console): Se você quiser parar os logs, e
 
 Abrir o Terminal na Pasta Correta: No VS Code, abra um novo terminal e navegue para a pasta frontend/ do seu projeto:
 
-Bash
+```bash
 
 cd frontend
 Iniciar o Servidor Python: Use o módulo http.server do Python para servir o Front-end na porta 8000:
 
-Bash
+```
 
-# Se você tem Python 3
+Se você tem Python 3
 python -m http.server 8000
 O terminal deve mostrar: Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
