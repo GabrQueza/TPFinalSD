@@ -86,3 +86,16 @@ Acessar a URL Localhost: Abra o navegador e acesse:
 
 http://localhost:8000/
 Testar: Com o Front-end carregado via http://localhost:8000, tente registrar e logar novamente (usuário alice, senha 1234).
+
+7. Para restartar o docker:
+```bash
+docker compose down -v
+```
+
+```bash
+docker compose build --no-cache
+```
+
+```bash
+docker compose up
+```
