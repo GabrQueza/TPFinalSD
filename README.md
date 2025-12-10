@@ -1,4 +1,4 @@
-Projeto Final: Sistema de Chat Distribuído (MicroChat)
+# Projeto Final: Sistema de Chat Distribuído (MicroChat)
 
 Este projeto implementa uma plataforma de comunicação em tempo real utilizando uma arquitetura de Microsserviços, WebSockets e Redis para garantir Escalabilidade Horizontal e Alta Disponibilidade, conforme os requisitos do Trabalho Final.
 
