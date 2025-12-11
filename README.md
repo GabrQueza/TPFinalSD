@@ -47,47 +47,8 @@ Serviço de Chat Escalonado: Duas instâncias do Chat Service são iniciadas nas
 
 Status dos Serviços: Você pode verificar os logs de cada serviço no terminal.
 
-5. Acesso e Teste da Aplicação
+5. Para restartar/iniciar o docker novamente:
 
-Frontend (Interface do Usuário):
-Abra o arquivo frontend/index.html diretamente no seu navegador.
-
-Teste de Autenticação:
-Use o formulário de login/registro para criar dois usuários (ex: alice e bob).
-
-Teste de Escalabilidade (Opcional, mas Recomendado):
-Para provar que o Redis está funcionando, abra o frontend/app.js e altere temporariamente a URL do Chat Service:
-
-Mude const CHAT_SERVICE_URL = 'http://localhost:3002';
-
-Para const CHAT_SERVICE_URL = 'http://localhost:3003';
-
-Salve, recarregue o index.html e tente enviar uma mensagem entre os usuários. A entrega imediata prova que o Redis distribuiu a mensagem entre as portas 3002 e 3003.
-
-6. Rodar pelo Python o locahost:
-
-Passo a Passo para Corrigir a Origem
-Parar o Docker (Opcional, mas limpa o console): Se você quiser parar os logs, execute docker compose down. Se não, continue com o próximo passo.
-
-Abrir o Terminal na Pasta Correta: No VS Code, abra um novo terminal e navegue para a pasta frontend/ do seu projeto:
-
-```bash
-
-cd frontend
-Iniciar o Servidor Python: Use o módulo http.server do Python para servir o Front-end na porta 8000:
-
-```
-
-Se você tem Python 3
-python -m http.server 8000
-O terminal deve mostrar: Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
-
-Acessar a URL Localhost: Abra o navegador e acesse:
-
-http://localhost:8000/
-Testar: Com o Front-end carregado via http://localhost:8000, tente registrar e logar novamente (usuário alice, senha 1234).
-
-7. Para restartar o docker:
 ```bash
 docker compose down -v
 ```
@@ -99,3 +60,30 @@ docker compose build --no-cache
 ```bash
 docker compose up
 ```
+
+6. Acesso da aplicação (via Python e o localhost)
+
+Abrir o Terminal na Pasta Correta: No VS Code, abra um novo terminal e navegue para a pasta frontend/ do seu projeto:
+
+```bash
+
+cd frontend
+
+```
+Iniciar o Servidor Python: Use o módulo http.server do Python para servir o Front-end na porta 8000:
+
+Se você tem Python 3
+```bash
+python -m http.server 8000
+```
+O terminal deve mostrar: Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
+
+Agora para o acesso do localhost, basta abrir duas janelas de navegadores e acessar:
+
+http://localhost:8000/
+Testar: Com o Front-end carregado via http://localhost:8000, tente registrar o primeiro usuário e logar novamente (Exemplo: usuário alice, senha 1234).
+Após isso na outra janela tente registrar o primeiro usuário e logar novamente (Exemplo: usuário bob, senha 1234)
+Cada janela vai mostrar quais usuários estão ativos no momento, portanto para alice(com um id único) vai verificar que o bob(com outro id único) está online para chat e vice-versa.
+Para o teste, basta um deles mandar uma mensagem para o outro e vice-versa, é simultâneo. É possível criar até 20 usuários simultâneos, garantido pelo código e pelo docker.
+
+
